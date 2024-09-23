@@ -7,10 +7,6 @@ AI-Test-Center/
 │   │   └── index.html        # Main HTML template
 │   │
 │   └── src/
-│       ├── assets/           # Static files (CSS, images)
-│       │   ├── styles/       # Global stylesheets (CSS/SCSS)
-│       │   └── images/       # Logos, icons, etc.
-│       │
 │       ├── components/       # Reusable React components
 │       │   ├── Auth/         # Login & Signup components
 │       │   ├── Dashboard/    # Main Dashboard components
