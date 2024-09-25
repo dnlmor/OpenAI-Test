@@ -1,26 +1,33 @@
 const express = require('express');
-const cors = require('cors');
-const dotenv = require('dotenv');
 const connectDB = require('./config/db');
 const authRoutes = require('./routes/authRoutes');
 const openaiRoutes = require('./routes/openaiRoutes');
-const testRoutes = require('./routes/testRoutes');
-const errorHandler = require('./utils/errorHandler');
+const errorHandler = require('./middleware/errorHandler');
+const dotenv = require('dotenv');
+const cors = require('cors');
 
 dotenv.config();
+
 const app = express();
 
-// Connect to MongoDB
+// Connect to the database
 connectDB();
 
+// CORS options
+const corsOptions = {
+  origin: 'http://localhost:3000',
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  credentials: true,
+  optionsSuccessStatus: 204
+};
+
 // Middleware
-app.use(cors());
+app.use(cors(corsOptions));
 app.use(express.json());
 
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/openai', openaiRoutes);
-app.use('/api/tests', testRoutes);
 
 // Error handling middleware
 app.use(errorHandler);

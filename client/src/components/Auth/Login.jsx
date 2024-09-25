@@ -1,50 +1,47 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { login } from '../../utils/auth';
+import { Link } from 'react-router-dom';
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const navigate = useNavigate();
+  const [errorMessage, setErrorMessage] = useState('');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setErrorMessage('');
+
     try {
-      await login(email, password);
-      navigate('/dashboard');
+      const response = await login(email, password);
+      console.log('Login successful:', response);
     } catch (error) {
-      console.error('Login failed:', error);
+      setErrorMessage('Login failed: ' + (error.response?.data?.message || 'Unknown error'));
     }
   };
 
   return (
-    <div className="flex flex-col items-center">
-      <form onSubmit={handleSubmit} className="flex flex-col">
+    <div className="login-container">
+      <form onSubmit={handleSubmit}>
+        <h2>Login</h2>
         <input
           type="email"
+          placeholder="Email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          placeholder="Email"
           required
-          className="mb-4 p-2 border border-gray-300"
         />
         <input
           type="password"
+          placeholder="Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          placeholder="Password"
           required
-          className="mb-4 p-2 border border-gray-300"
         />
-        <button type="submit" className="bg-blue-500 text-white p-2">
-          Login
-        </button>
+        <button type="submit">Login</button>
+        {errorMessage && <p className="error">{errorMessage}</p>}
       </form>
-      <p className="mt-4">
-        Don't have an account?{' '}
-        <button onClick={() => navigate('/signup')} className="text-blue-500">
-          Sign Up
-        </button>
+      <p>
+        Don't have an account? <Link to="/signup">Sign up</Link>
       </p>
     </div>
   );

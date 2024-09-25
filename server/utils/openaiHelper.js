@@ -8,17 +8,13 @@ const openai = axios.create({
   },
 });
 
-// Function to get response from OpenAI
 const getOpenAIResponse = async (prompt) => {
-  try {
-    const response = await openai.post('', {
-      model: 'gpt-3.5-turbo',
-      messages: [{ role: 'user', content: prompt }],
-    });
-    return response.data.choices[0].message.content;
-  } catch (error) {
-    throw new Error('Error communicating with OpenAI API');
-  }
+  const response = await openai.post('', {
+    model: 'gpt-3.5-turbo',
+    messages: [{ role: 'user', content: prompt }],
+  });
+  
+  return response.data.choices[0].message.content;
 };
 
 module.exports = { getOpenAIResponse };
