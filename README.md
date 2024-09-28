@@ -1,77 +1,81 @@
-# OpenAI-Test
-
-    AI-Test-Center/
+    AI-LanguageLearning-Center/
     │
-    ├── client/                   # Frontend (React.js)
+    ├── client/                   
     │   ├── public/
-    │   │   └── index.html        # Main HTML template
+    │   │   └── index.html        
     │   │
     │   └── src/
-    │       ├── assets/           # Assets such as images
-    │       │   └── bg_image.jpg  # Background image for login/signup and dashboard
+    │       ├── assets/           
+    │       │   └── bg_image.jpg  
     │       │
-    │       ├── components/       # Reusable React components
-    │       │   ├── Auth/         # Login & Signup components
-    │       │   │   ├── Login.js   # Login component
-    │       │   │   └── Signup.js  # Signup component
+    │       ├── components/       
+    │       │   ├── Auth/         
+    │       │   │   ├── Login.jsx
+    │       │   │   └── Signup.jsx
     │       │   │
-    │       │   ├── Dashboard/    # Main Dashboard components
-    │       │   │   ├── Sidebar.js   # Sidebar for navigation
-    │       │   │   ├── Chatbot.js    # Chatbot UI
-    │       │   │   ├── LanguageSelector.js # Component for choosing a language
-    │       │   │   ├── SectionSelector.js  # Component for choosing sections (lessons, exercises, etc.)
-    │       │   │   ├── SavedConvo.js       # Component for displaying saved conversations
-    │       │   │   └── WelcomeHeader.js     # Component for welcome header and introduction
+    │       │   ├── Dashboard/
+    │       │   │   ├── Dashboard.jsx
+    │       │   │   ├── Sidebar.jsx
+    │       │   │   ├── Chatbot.jsx
+    │       │   │   ├── LanguageSelector.jsx
+    │       │   │   ├── SectionSelector.jsx
+    │       │   │   ├── SaveConversationModal.jsx
+    │       │   │   ├── SavedConvo.js
+    │       │   │   └── WelcomeHeader.jsx
     │       │   │
-    │       │   ├── Popup.js      # Reusable Popup Modal
-    │       │   │
-    │       │   ├── Layout.js     # Layout component to handle opacity styles for pages
+    │       │   ├── Popup.jsx    
+    │       │   ├── LogoutButton.jsx
+    │       │   ├── PrivateRoute.js
+    │       │   ├── Layout.jsx
     │       │
-    │       ├── context/          # Context API for managing global state
+    │       ├── context/          
     │       │   └── UserContext.js
     │       │
-    │       ├── pages/            # Page components (React Router)
-    │       │   ├── LoginPage.js
-    │       │   ├── SignupPage.js
-    │       │   └── DashboardPage.js
+    │       ├── pages/            
+    │       │   ├── LoginPage.jsx
+    │       │   ├── SignupPage.jsx
+    │       │   └── DashboardPage.jsx
     │       │
-    │       ├── services/         # API service handlers
-    │       │   └── openai.js     # Functions to call OpenAI API
+    │       ├── services/         
+    │       │   └── openai.js
+    │       │   └── conversation.js
     │       │
-    │       ├── utils/            # Helper functions (auth, etc.)
-    │       │   └── auth.js       # Token management, authentication
+    │       ├── utils/            
+    │       │   └── auth.js       
     │       │
-    │       ├── App.js            # Root React component
-    │       ├── index.js          # Main entry point for React app
+    │       ├── App.js            
+    │       ├── index.js          
     │       └── package.json
     │
     server/
     ├── config/
-    │   └── db.js             # MongoDB connection setup
+    │   └── db.js             
     │
     ├── controllers/
-    │   ├── authController.js  # Handles user login/signup
-    │   ├── openaiController.js # Manages interactions with OpenAI API
-    │   └── languageController.js # Manages language learning logic
+    │   ├── authController.js  
+    │   ├── openaiController.js 
+    │   ├── languageController.js 
+    │   └── conversationController.js
     │
     ├── middleware/
-    │   ├── authMiddleware.js   # JWT authentication middleware
-    │   └── errorHandler.js      # Error handling middleware
+    │   ├── authMiddleware.js   
+    │   └── errorHandler.js     
     │
     ├── models/
-    │   ├── User.js             # User model
-    │   ├── Conversation.js      # Stores user conversations
-    │   └── Language.js         # Manages supported languages
+    │   ├── User.js             
+    │   ├── Conversation.js
+    │   └── Language.js         
     │
     ├── routes/
-    │   ├── authRoutes.js       # Routes for user auth
-    │   ├── openaiRoutes.js     # Routes for OpenAI interaction
-    │   └── languageRoutes.js    # Routes for language services
+    │   ├── authRoutes.js       
+    │   ├── openaiRoutes.js     
+    │   ├── languageRoutes.js    
+    │   └── conversationRoutes.js
     │
     ├── utils/
-    │   ├── generateToken.js     # JWT token generator
-    │   └── openaiHelper.js      # Helper for OpenAI API calls
+    │   ├── generateToken.js     
+    │   └── openaiHelper.js      
     │
-    ├── app.js                  # Express app setup
-    ├── server.js               # Entry point for the Node server
-    └── package.json            # Project metadata and dependencies
+    ├── app.js                  
+    ├── server.js               
+    └── package.json            

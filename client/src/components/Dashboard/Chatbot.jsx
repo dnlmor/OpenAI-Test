@@ -1,67 +1,107 @@
-import React, { useState } from 'react';
-import { sendMessage, saveConversation } from '../../services/openai';
+import React, { useEffect, useState } from 'react';
+import { sendMessage } from '../../services/openai';
+import { saveConversation as saveConversationAPI } from '../../services/conversation';
 
-const Chatbot = ({ language, section, userId }) => {
-  const [messages, setMessages] = useState([]);
+const Chatbot = ({ language, section, activeConversation }) => {
+  const [messages, setMessages] = useState(activeConversation?.messages || []);
   const [input, setInput] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [savingError, setSavingError] = useState('');
 
-  const handleSend = async () => {
-    if (input.trim()) {
-      const userMessage = input;
-      setMessages((prev) => [...prev, { sender: 'User', content: userMessage }]);
-      setInput('');
-      setLoading(true);
+  // Load messages
+  useEffect(() => {
+    if (activeConversation) {
+      setMessages(activeConversation.messages);
+    }
+  }, [activeConversation]);
 
-      try {
-        const botResponse = await sendMessage(userMessage, language, section);
-        setMessages((prev) => [...prev, { sender: 'AI', content: botResponse }]);
-      } catch (error) {
-        console.error(error);
-        setMessages((prev) => [
-          ...prev,
-          { sender: 'AI', content: 'Sorry, I could not process your request.' }
-        ]);
-      } finally {
-        setLoading(false);
-      }
+  const handleSendMessage = async () => {
+    if (!input.trim()) return;
+
+    const newMessage = { role: 'user', content: input, timestamp: new Date() };
+    setMessages([...messages, newMessage]);
+    setInput('');
+
+    try {
+      const botResponse = await sendMessage(input, language, section);
+      setMessages((prevMessages) => [
+        ...prevMessages,
+        { role: 'assistant', content: botResponse, timestamp: new Date() }
+      ]);
+    } catch (error) {
+      console.error('Error sending message:', error);
     }
   };
 
   const handleSaveConversation = async () => {
-    const conversationData = {
-      userId: userId,
-      messages: messages,
-      testType: language,
-      section: section
-    };
-    await saveConversation(conversationData);
+    setIsSaving(true);
+    setSavingError('');
+
+    try {
+      const conversationData = {
+        messages,
+        name: `Conversation on ${new Date().toLocaleString()}`,
+        language,
+        section,
+      };
+
+      await saveConversationAPI(conversationData);
+      alert('Conversation saved successfully!');
+    } catch (error) {
+      console.error('Error saving conversation:', error);
+      setSavingError('Failed to save conversation. Please try again.');
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   return (
-    <div className="bg-white shadow-md rounded-lg p-4 mt-4">
-      <h2 className="text-xl font-semibold">Chatbot ({language} - {section})</h2>
-      <div className="h-64 overflow-y-auto border border-gray-300 p-2 mb-2">
-        {messages.map((msg, index) => (
-          <div key={index} className={`my-2 flex ${msg.sender === 'User' ? 'justify-end' : 'justify-start'}`}>
-            <div className={`bg-${msg.sender === 'User' ? 'blue' : 'green'}-600 text-white rounded-lg p-2`}>
-              <strong>{msg.sender}:</strong> {msg.content}
+    <div className="flex-1 flex flex-col p-4 bg-white rounded-lg shadow-lg">
+      <h3 className="text-xl font-bold mb-4">Conversation in {section} ({language})</h3>
+
+      {savingError && (
+        <div className="p-2 bg-red-100 text-red-800 rounded mb-4">
+          {savingError}
+        </div>
+      )}
+
+      <div className="flex-1 overflow-y-auto p-4 bg-gray-50 rounded shadow-inner space-y-3">
+        {messages.map((message, index) => (
+          <div
+            key={index}
+            className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
+          >
+            <div className={`max-w-xs p-3 rounded-lg shadow ${message.role === 'user' ? 'bg-blue-600 text-white' : 'bg-green-600 text-white'}`}>
+              <p className="text-sm">{message.content}</p>
+              <p className="text-xs text-gray-300">{new Date(message.timestamp).toLocaleTimeString()}</p>
             </div>
           </div>
         ))}
-        {loading && <div className="text-gray-400">AI is typing...</div>}
       </div>
-      <div className="flex">
+
+      <div className="flex items-center mt-4">
         <input
           type="text"
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          placeholder="Type your message"
-          className="flex-grow border rounded-lg p-2"
+          placeholder="Type a message..."
+          className="flex-1 p-3 border border-gray-300 rounded-lg"
         />
-        <button onClick={handleSend} className="bg-blue-600 text-white py-2 px-4 rounded-lg ml-2">Send</button>
+        <button
+          onClick={handleSendMessage}
+          className="ml-2 p-3 bg-blue-600 text-white rounded-lg"
+        >
+          Send
+        </button>
       </div>
-      <button onClick={handleSaveConversation} className="bg-green-600 text-white py-2 px-4 rounded-lg mt-2">Save Conversation</button>
+
+      <button
+        onClick={handleSaveConversation}
+        className={`mt-4 p-3 ${isSaving ? 'bg-gray-400' : 'bg-green-600'} text-white rounded-lg`}
+        disabled={isSaving}
+      >
+        {isSaving ? 'Saving...' : 'Save Conversation'}
+      </button>
     </div>
   );
 };

@@ -1,7 +1,6 @@
 const { getOpenAIResponse } = require('../utils/openaiHelper');
 const Conversation = require('../models/Conversation');
 
-// Get response from OpenAI
 const getChatbotResponse = async (req, res) => {
   const { prompt, testType, section } = req.body;
 
@@ -14,12 +13,11 @@ const getChatbotResponse = async (req, res) => {
   }
 };
 
-// Save conversation
 const saveConversation = async (req, res) => {
-  const { userId, messages, testType, section } = req.body;
+  const { userId, messages, testType, section, name } = req.body;
 
   try {
-    const conversation = new Conversation({ userId, messages, testType, section });
+    const conversation = new Conversation({ userId, messages, testType, section, name });
     await conversation.save();
     res.status(201).json({ message: 'Conversation saved!', conversation });
   } catch (error) {
@@ -28,9 +26,12 @@ const saveConversation = async (req, res) => {
   }
 };
 
-// Fetch saved conversations
 const getSavedConversations = async (req, res) => {
-  const { userId } = req.params;
+  const userId = req.user?.id;
+
+  if (!userId) {
+    return res.status(400).json({ error: 'User ID is required' });
+  }
 
   try {
     const conversations = await Conversation.find({ userId });
