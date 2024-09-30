@@ -21,6 +21,7 @@
     │       │   ├── chatApi.js        # Manages OpenAI chat communications
     │       │   ├── conversationApi.js  # APIs to manage user conversations (save, retrieve)
     │       │   ├── languageApi.js    # Language-related API calls
+    │       │   ├── profileApi.js    # Language-related API calls
     │       │   └── pdfApi.js         # NEW: API to handle conversation download requests
     │       │
     │       ├── assets/               # Static assets (fonts, styles, etc.)
@@ -54,6 +55,7 @@
     │       │       ├── Header.jsx    # Top navigation bar for the app
     │       │       ├── Footer.jsx
     │       │       └── MainLayout.jsx  # Central layout that wraps pages
+    │       │   ├── PrivateRoute.js
     │       │
     │       ├── context/              # React Context for global state management
     │       │   ├── AuthContext.js    # Context for managing authentication state
@@ -72,9 +74,12 @@
     │       │   │   └── SignupPage.jsx
     │       │   └── Dashboard/        # Main Dashboard page
     │       │       └── DashboardPage.jsx
+    │       │   ├── ProfilePage.jsx
+    │       │   ├── NotFound.jsx
     │       │
     │       ├── services/             # Logic abstraction (API/3rd-party service interactions)
     │       │   ├── openaiService.js  # All logic related to OpenAI API interaction
+    │       │   ├── conversationService.js  # All logic related to OpenAI API interaction
     │       │   ├── authService.js    # Handles authentication logic
     │       │   ├── storageService.js # LocalStorage/session management
     │       │   └── pdfService.js     # NEW: Logic to generate/download conversation as PDF
@@ -105,6 +110,7 @@
     │
     ├── middleware/
     │   ├── authMiddleware.js         # JWT verification and route protection
+    │   ├── requestLogger.js
     │   └── errorHandler.js           # Handles and formats errors globally
     │
     ├── models/
