@@ -3,7 +3,7 @@ import { registerUser } from '../../api/authApi';
 import { AuthContext } from '../../context/AuthContext';
 import { toast } from 'react-toastify';
 
-const Signup = ({ onSuccess }) => {
+const Signup = () => {
   const { setUser } = useContext(AuthContext);
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -15,9 +15,8 @@ const Signup = ({ onSuccess }) => {
     setLoading(true);
     try {
       const userData = await registerUser({ name, email, password });
-      setUser(userData);
-      onSuccess(userData);
-      toast.success('Signup successful! Please log in.');
+      setUser(userData); // Set user in AuthContext
+      toast.success('Signup successful! Redirecting to dashboard...');
     } catch (error) {
       toast.error(error.message || 'Signup failed. Please try again.');
     } finally {

@@ -1,24 +1,38 @@
 import React, { useState, useContext } from 'react';
-import { login } from '../../utils/auth';
+import { loginUser } from '../../api/authApi';
 import { AuthContext } from '../../context/AuthContext';
 import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
 
-const Login = ({ onSuccess }) => {
+const Login = () => {
   const { setUser } = useContext(AuthContext);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    setLoading(true);
     try {
-      const userData = await login(email, password);
+      const userData = await loginUser({ email, password });
+      if (!userData || !userData.token) {
+        throw new Error('Login failed. No user data returned.');
+      }
+      
+      // Store token and user data if necessary
       setUser(userData);
-      onSuccess(userData);
+      localStorage.setItem('token', userData.token);
+      
       toast.success('Login successful!');
+      console.log('Navigating to dashboard...');
+      navigate('/dashboard');
     } catch (error) {
       toast.error(error.message || 'Login failed. Please try again.');
+    } finally {
+      setLoading(false);
     }
-  };
+  };  
 
   return (
     <form onSubmit={handleLogin} className="space-y-6">
@@ -46,9 +60,10 @@ const Login = ({ onSuccess }) => {
       </div>
       <button
         type="submit"
-        className="w-full bg-blue-600 text-white py-3 rounded-md hover:bg-blue-700 transition duration-200"
+        disabled={loading}
+        className={`w-full py-3 rounded-md transition duration-200 ${loading ? 'bg-gray-400' : 'bg-blue-600 text-white hover:bg-blue-700'}`}
       >
-        Login
+        {loading ? 'Logging in...' : 'Login'}
       </button>
     </form>
   );

@@ -29,7 +29,7 @@ const registerUser = asyncHandler(async (req, res) => {
   }
 });
 
-// Login controller
+// Login Controller
 const loginUser = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
 
@@ -48,7 +48,23 @@ const loginUser = asyncHandler(async (req, res) => {
   }
 });
 
-// Password reset request
+// Get User Profile
+const getUserProfile = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.user._id).select('-password');
+
+  if (user) {
+      res.json({
+          _id: user._id,
+          name: user.name,
+          email: user.email,
+      });
+  } else {
+      res.status(404);
+      throw new Error('User not found');
+  }
+});
+
+// Request Password Reset
 const requestPasswordReset = asyncHandler(async (req, res) => {
   const { email } = req.body;
   const user = await User.findOne({ email });
@@ -63,13 +79,13 @@ const requestPasswordReset = asyncHandler(async (req, res) => {
   user.passwordResetExpires = Date.now() + 3600000;
   await user.save();
 
-  // Send email with reset token link (not being used)
+  // Send email with reset token link (implement email sending)
   // await sendResetEmail(user.email, resetToken);
 
   res.status(200).json({ message: 'Reset token sent to email' });
 });
 
-// Password reset
+// Reset Password
 const resetPassword = asyncHandler(async (req, res) => {
   const { token, password } = req.body;
   const user = await User.findOne({
@@ -90,22 +106,7 @@ const resetPassword = asyncHandler(async (req, res) => {
   res.status(200).json({ message: 'Password reset successful' });
 });
 
-// Get user profile
-const getUserProfile = asyncHandler(async (req, res) => {
-  const user = await User.findById(req.user._id);
-
-  if (user) {
-    res.json({
-      _id: user._id,
-      name: user.name,
-      email: user.email,
-    });
-  } else {
-    res.status(404);
-    throw new Error('User not found');
-  }
-});
-
+// Export the controller methods
 module.exports = {
   registerUser,
   loginUser,
