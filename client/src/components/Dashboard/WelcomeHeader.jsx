@@ -2,10 +2,10 @@ import React from 'react';
 
 const WelcomeHeader = () => {
   return (
-    <div className="bg-blue-100 p-4 rounded-lg mb-4">
-      <h2 className="text-2xl font-semibold">Welcome to Your Dashboard!</h2>
-      <p className="text-gray-600">Here you can interact with the chatbot and manage your settings.</p>
-    </div>
+    <header className="flex items-center justify-between p-4 bg-blue-500 text-white">
+      <h1 className="text-xl">Welcome to the Chat App</h1>
+      <button className="bg-red-500 p-2 rounded">Logout</button>
+    </header>
   );
 };
 

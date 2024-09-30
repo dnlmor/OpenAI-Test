@@ -1,10 +1,26 @@
+const http = require('http');
+const connectDB = require('./config/db');
 const app = require('./app');
-const dotenv = require('dotenv');
+const logger = require('./utils/logger');
 
-dotenv.config();
+// Load environment variables
+require('dotenv').config();
+
+// Connect to MongoDB
+connectDB();
+
+// Initialize HTTP server
+const server = http.createServer(app);
 
 const PORT = process.env.PORT || 5000;
 
-app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
+// Start server
+server.listen(PORT, () => {
+  logger.info(`Server running on port ${PORT} in ${process.env.NODE_ENV} mode`);
+});
+
+// Handle unhandled rejections
+process.on('unhandledRejection', (err) => {
+  logger.error(`Error: ${err.message}`);
+  server.close(() => process.exit(1));
 });

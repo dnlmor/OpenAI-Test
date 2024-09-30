@@ -1,49 +1,56 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { login } from '../../utils/auth';
-import { Link } from 'react-router-dom';
+import { AuthContext } from '../../context/AuthContext';
+import { toast } from 'react-toastify';
 
-const Login = () => {
+const Login = ({ onSuccess }) => {
+  const { setUser } = useContext(AuthContext);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [errorMessage, setErrorMessage] = useState('');
 
-  const handleSubmit = async (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    setErrorMessage('');
-
     try {
-      const response = await login(email, password);
-      console.log('Login successful:', response);
+      const userData = await login(email, password);
+      setUser(userData);
+      onSuccess(userData);
+      toast.success('Login successful!');
     } catch (error) {
-      setErrorMessage('Login failed: ' + (error.response?.data?.message || 'Unknown error'));
+      toast.error(error.message || 'Login failed. Please try again.');
     }
   };
 
   return (
-    <div className="login-container">
-      <form onSubmit={handleSubmit}>
-        <h2>Login</h2>
+    <form onSubmit={handleLogin} className="space-y-6">
+      <div>
+        <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email</label>
         <input
           type="email"
-          placeholder="Email"
+          id="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
+          className="mt-2 block w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 transition duration-150 ease-in-out"
         />
+      </div>
+      <div>
+        <label htmlFor="password" className="block text-sm font-medium text-gray-700">Password</label>
         <input
           type="password"
-          placeholder="Password"
+          id="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
+          className="mt-2 block w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 transition duration-150 ease-in-out"
         />
-        <button type="submit">Login</button>
-        {errorMessage && <p className="error">{errorMessage}</p>}
-      </form>
-      <p>
-        Don't have an account? <Link to="/signup">Sign up</Link>
-      </p>
-    </div>
+      </div>
+      <button
+        type="submit"
+        className="w-full bg-blue-600 text-white py-3 rounded-md hover:bg-blue-700 transition duration-200"
+      >
+        Login
+      </button>
+    </form>
   );
 };
 

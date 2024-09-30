@@ -1,15 +1,19 @@
 import React from 'react';
 
-const SectionSelector = ({ onSectionChange }) => {
-  const sections = ['Lessons', 'Tips', 'Simulation Test'];
+const SectionSelector = ({ onSelectSection }) => {
+  const sections = ['Training', 'Simulation Test'];
+
+  const handleSelectSection = (section) => {
+    onSelectSection(section);
+  };
 
   return (
-    <div className="mt-4 flex flex-wrap">
+    <div className="grid grid-cols-1 gap-4">
       {sections.map((section) => (
         <button
           key={section}
-          onClick={() => onSectionChange(section)}
-          className="bg-green-600 text-white rounded-lg px-4 py-2 m-2 hover:bg-green-700"
+          onClick={() => handleSelectSection(section)}
+          className="bg-gray-200 hover:bg-gray-300 text-black py-2 px-4 rounded transition duration-200"
         >
           {section}
         </button>

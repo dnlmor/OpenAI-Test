@@ -1,50 +1,73 @@
-import React, { useState } from 'react';
-import { signup } from '../../utils/auth';
-import { Link } from 'react-router-dom';
+import React, { useState, useContext } from 'react';
+import { registerUser } from '../../api/authApi';
+import { AuthContext } from '../../context/AuthContext';
+import { toast } from 'react-toastify';
 
-const Signup = () => {
+const Signup = ({ onSuccess }) => {
+  const { setUser } = useContext(AuthContext);
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [errorMessage, setErrorMessage] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async (e) => {
+  const handleSignup = async (e) => {
     e.preventDefault();
-    setErrorMessage('');
-
+    setLoading(true);
     try {
-      const response = await signup(email, password);
-      console.log('Signup successful:', response);
-      // Redirect to login or dashboard
+      const userData = await registerUser({ name, email, password });
+      setUser(userData);
+      onSuccess(userData);
+      toast.success('Signup successful! Please log in.');
     } catch (error) {
-      setErrorMessage('Signup failed: ' + (error.response?.data?.message || 'Unknown error'));
+      toast.error(error.message || 'Signup failed. Please try again.');
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="signup-container">
-      <form onSubmit={handleSubmit}>
-        <h2>Sign Up</h2>
+    <form onSubmit={handleSignup} className="space-y-6">
+      <div>
+        <label htmlFor="name" className="block text-sm font-medium text-gray-700">Name</label>
+        <input
+          type="text"
+          id="name"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          required
+          className="mt-2 block w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-400 transition duration-150 ease-in-out"
+        />
+      </div>
+      <div>
+        <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email</label>
         <input
           type="email"
-          placeholder="Email"
+          id="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
+          className="mt-2 block w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-400 transition duration-150 ease-in-out"
         />
+      </div>
+      <div>
+        <label htmlFor="password" className="block text-sm font-medium text-gray-700">Password</label>
         <input
           type="password"
-          placeholder="Password"
+          id="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
+          className="mt-2 block w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-400 transition duration-150 ease-in-out"
         />
-        <button type="submit">Sign Up</button>
-        {errorMessage && <p className="error">{errorMessage}</p>}
-      </form>
-      <p>
-        Already have an account? <Link to="/login">Login</Link>
-      </p>
-    </div>
+      </div>
+      <button
+        type="submit"
+        className={`w-full ${loading ? 'bg-gray-400' : 'bg-green-600'} text-white py-3 rounded-md hover:bg-green-700 transition duration-200`}
+        disabled={loading}
+      >
+        {loading ? 'Signing Up...' : 'Sign Up'}
+      </button>
+    </form>
   );
 };
 

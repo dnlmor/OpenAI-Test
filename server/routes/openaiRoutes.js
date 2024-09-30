@@ -1,11 +1,8 @@
 const express = require('express');
-const { getChatbotResponse, saveConversation, getSavedConversations } = require('../controllers/openaiController');
-const authenticate = require('../middleware/authMiddleware');
-
 const router = express.Router();
+const { getChatbotResponse } = require('../controllers/openaiController');
 
-router.post('/chat', authenticate, getChatbotResponse);
-router.post('/save-conversation', authenticate, saveConversation);
-router.get('/saved-conversations/:userId', authenticate, getSavedConversations);
+// POST route for chat
+router.post('/chat', getChatbotResponse);
 
 module.exports = router;
